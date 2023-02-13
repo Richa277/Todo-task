@@ -1,13 +1,13 @@
 import './App.css';
-import Form from './Components/Footer/Form';
-import Header from './Components/Header';
+import Header from './Components/Layout/Header';
+import TodoList from './Components/Layout/Todo/TodoList';
 
 function App() {
   return (
     <div className="App">
       <Header/>
       
-      <Form/>
+      <TodoList/>
 
     </div>
   );
