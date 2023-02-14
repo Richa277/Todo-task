@@ -1,5 +1,5 @@
-export const set = (key, data) => {
-  if (data.length > 0) localStorage.setItem(key, JSON.stringify(data));
+export const set = (key, value) => {
+  if (value.length > 0) localStorage.setItem(key, JSON.stringify(value));
 };
 
 export const get = (key) => {
