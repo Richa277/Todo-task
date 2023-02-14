@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import List from "./TodoList";
 import { get, set } from "../../../Services/Storage";
 import styles from "./Input.module.css";
@@ -6,39 +6,41 @@ import styles from "./Input.module.css";
 function TodoList() {
   const [data, setData] = useState([]);
   const [value, setValue] = useState("");
+  const [id, setId] = useState(1);
   useEffect(() => {
-    const items = get();
+    const items = get("data");
     if (items) {
       setData(items);
     }
   }, []);
-  let getValue = useRef();
-  const handleInputBox = () => {
-    setValue(getValue.current.value);
+  const handleInputBox = (e) => {
+    setValue(e.target.value);
   };
-  const handleInput = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setData((data) => [...data, { text: getValue.current.value }]);
-    set(data);
+    setId(id + 1);
+    setData((data) => [...data, { id: id, text: value }]);
     setValue("");
   };
-
+  useEffect(() => {
+    set("data", data);
+  });
+  console.log(data);
   return (
     <div className={styles.mainForm}>
       <form>
         <input
           type="text"
           placeholder="Add your task"
-          ref={getValue}
           onChange={handleInputBox}
           className="input"
           value={value}
         />
-        <button onClick={handleInput} className={styles.submit}>
+        <button onClick={handleSubmit} className={styles.submit}>
           Submit
         </button>
       </form>
-      <List data={data} />
+      <List data={data} setData={setData} />
     </div>
   );
 }

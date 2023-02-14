@@ -1,7 +1,7 @@
-export const set = (data) => {
-  localStorage.setItem("data", JSON.stringify(data));
+export const set = (key, data) => {
+  if (data.length > 0) localStorage.setItem(key, JSON.stringify(data));
 };
 
-export const get = () => {
-  return JSON.parse(localStorage.getItem("data"));
+export const get = (key) => {
+  return JSON.parse(localStorage.getItem(key));
 };
