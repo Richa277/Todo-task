@@ -4,9 +4,12 @@ import styles from "./TodoList.module.css";
 
 function TodoList() {
   const [data, setData] = useState([]);
-  const [value, setValue] = useState("");
   const [editing, setEditing] = useState(false);
-  const [selected, setSelected] = useState(true);
+  const [update, setUpdate] = useState({
+    value: "",
+    selected: 0,
+  });
+
   useEffect(() => {
     const items = get("data");
     if (items) {
@@ -14,12 +17,16 @@ function TodoList() {
     }
   }, []);
   const handleInputBox = (e) => {
-    setValue(e.target.value);
+    setUpdate({ ...update, value: e.target.value });
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    setData((data) => [...data, { id: Math.random() * 1000, text: value }]);
-    setValue("");
+
+    setData((data) => [
+      ...data,
+      { id: Math.random() * 1000, text: update.value },
+    ]);
+    setUpdate({ ...update, value: "" });
   };
   useEffect(() => {
     set("data", data);
@@ -29,20 +36,19 @@ function TodoList() {
     let newEDit = data.find((ele) => {
       return ele.id === idd;
     });
-    setSelected(newEDit.id);
-    setValue(newEDit.text);
+    setUpdate({ value: newEDit.text, selected: newEDit.id });
   };
   const handleSave = () => {
     setData(
       data.map((ele) => {
-        if (ele.id === selected) {
-          return { ...ele, text: value };
+        if (ele.id === update.selected) {
+          return { ...ele, text: update.value };
         }
         return ele;
       })
     );
     setEditing(false);
-    setValue("");
+    setUpdate({ ...update, value: "" });
   };
   return (
     <div className={styles.mainForm}>
@@ -52,16 +58,15 @@ function TodoList() {
           placeholder="Add your task"
           onChange={handleInputBox}
           className="input"
-          value={value}
+          value={update.value}
         />
-        {!editing && (
-          <button onClick={handleSubmit} className={styles.submit}>
-            Submit
-          </button>
-        )}
-        {editing && (
+        {editing ? (
           <button onClick={handleSave} className={styles.save}>
             Save
+          </button>
+        ) : (
+          <button onClick={handleSubmit} className={styles.submit}>
+            Submit
           </button>
         )}
       </form>
