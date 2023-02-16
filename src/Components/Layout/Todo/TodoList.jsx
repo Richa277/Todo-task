@@ -29,16 +29,15 @@ function TodoList() {
     setTodo({ text: newEDit.text, id: newEDit.id });
   };
   useEffect(() => {
-    set("data", data);
-    setTodo({ text: "" });
-  }, [data]);
-
-  useEffect(() => {
     const items = get("data");
     if (items) {
       setData(items);
     }
   }, []);
+  useEffect(() => {
+    set("data", data);
+    setTodo({ text: "" });
+  }, [data]);
 
   return (
     <div className={styles.mainForm}>
