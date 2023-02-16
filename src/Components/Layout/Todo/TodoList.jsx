@@ -1,54 +1,43 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { get, set } from "../../../Services/Storage";
 import styles from "./TodoList.module.css";
 
 function TodoList() {
   const [data, setData] = useState([]);
-  const [editing, setEditing] = useState(false);
-  const [update, setUpdate] = useState({
-    value: "",
-    selected: 0,
-  });
-
+  const [todo, setTodo] = useState({ text: "" });
+  const inputValue = useRef();
   useEffect(() => {
     const items = get("data");
     if (items) {
       setData(items);
     }
   }, []);
-  const handleInputBox = (e) => {
-    setUpdate({ ...update, value: e.target.value });
-  };
   const handleSubmit = (e) => {
+    let { id, text } = todo;
     e.preventDefault();
 
-    setData((data) => [
-      ...data,
-      { id: Math.random() * 1000, text: update.value },
-    ]);
-    setUpdate({ ...update, value: "" });
+    setData((data) => {
+      if (id) {
+        text = inputValue.current.value;
+        return data.map((t) => (t.id === id ? { ...t, text } : t));
+      } else {
+        return [
+          ...data,
+          { id: Math.random() * 1000, text: inputValue.current.value },
+        ];
+      }
+    });
   };
   useEffect(() => {
     set("data", data);
+    inputValue.current.value = "";
   }, [data]);
   const handleEdit = (idd) => {
-    setEditing(true);
     let newEDit = data.find((ele) => {
       return ele.id === idd;
     });
-    setUpdate({ value: newEDit.text, selected: newEDit.id });
-  };
-  const handleSave = () => {
-    setData(
-      data.map((ele) => {
-        if (ele.id === update.selected) {
-          return { ...ele, text: update.value };
-        }
-        return ele;
-      })
-    );
-    setEditing(false);
-    setUpdate({ ...update, value: "" });
+    setTodo({ text: newEDit.text, id: newEDit.id });
+    inputValue.current.value = newEDit.text;
   };
   return (
     <div className={styles.mainForm}>
@@ -56,19 +45,13 @@ function TodoList() {
         <input
           type="text"
           placeholder="Add your task"
-          onChange={handleInputBox}
           className="input"
-          value={update.value}
+          ref={inputValue}
         />
-        {editing ? (
-          <button onClick={handleSave} className={styles.save}>
-            Save
-          </button>
-        ) : (
-          <button onClick={handleSubmit} className={styles.submit}>
-            Submit
-          </button>
-        )}
+
+        <button onClick={handleSubmit} className={styles.submit}>
+          Submit
+        </button>
       </form>
       <div>
         <h2>Todo</h2>
