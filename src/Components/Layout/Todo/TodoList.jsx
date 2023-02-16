@@ -19,7 +19,7 @@ function TodoList() {
     setData((data) => {
       if (id) {
         text = inputValue.current.value;
-        return data.map((t) => (t.id === id ? { ...t, text } : t));
+        return data.map((ele) => (ele.id === id ? { ...ele, text } : ele));
       } else {
         return [
           ...data,
